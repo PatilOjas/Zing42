@@ -15,7 +15,7 @@ class API_User(models.Model):
 
 
 class Company(models.Model):
-	symbol = models.CharField(max_length=50, null=False, blank=False)
+	symbol = models.CharField(max_length=50, null=False, blank=False, primary_key=True)
 	companyName = models.CharField(max_length=50, null=False, blank=False)
 	series = models.CharField(max_length=2, null=False, blank=False)
 	isInNumber = models.CharField(max_length=12, null=False, blank=False)
@@ -26,17 +26,19 @@ class Company(models.Model):
 
 class EquitySec(models.Model):
 	# id = models.AutoField(primary_key=True)
-	symbol = models.CharField(max_length=50, null=False, blank=False)
+	# symbol = models.CharField(max_length=50, null=False, blank=False)
+	symbol = models.ForeignKey(Company, on_delete=models.CASCADE)
 	listing_date = models.DateField()
 	paidUpValue = models.IntegerField()
 	faceValue = models.IntegerField()
 
 	def __str__(self) -> str:
-		return self.company
+		return self.symbol.symbol
 
 class BhavCopy(models.Model):
 	# id = models.AutoField(primary_key=True)
-	symbol = models.CharField(max_length=50, null=False, blank=False)
+	# symbol = models.CharField(max_length=50, null=False, blank=False)
+	symbol = models.ForeignKey(Company, on_delete=models.CASCADE)
 	open = models.FloatField()
 	high = models.FloatField()
 	low = models.FloatField()
@@ -45,8 +47,8 @@ class BhavCopy(models.Model):
 	prevClose = models.FloatField()
 	tottrdqty = models.IntegerField()
 	tottrdval = models.FloatField()
-	timeStamp = models.CharField(max_length=15, null=False, blank=False)
+	timeStamp = models.DateField()
 	totalTrades = models.IntegerField()
 
 	def __str__(self) -> str:
-		return self.company
+		return self.symbol.symbol

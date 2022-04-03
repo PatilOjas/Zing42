@@ -70,12 +70,12 @@ def updateDB(request):
 			series=data['SERIES'], 
 			isInNumber=data['ISIN_NUMBER'])
 			companyInstance.save()
-		else:
-			flag = flag[0]
+
+		companyInstance = Company.objects.filter(symbol=symbol)[0]
 		flag = EquitySec.objects.filter(symbol=data['SYMBOL'])
 		if not flag:
-			date = datetime_object = datetime.strptime(data['DATE_OF_LISTING'], '%d-%b-%y')
-			equityInstance = EquitySec(symbol=data['SYMBOL'], 
+			date = datetime.strptime(data['DATE_OF_LISTING'], '%d-%b-%y')
+			equityInstance = EquitySec(symbol=companyInstance, 
 			listing_date=date.strftime("%Y-%m-%d"), 
 			paidUpValue=data['PAID_UP_VALUE'], 
 			faceValue=data['FACE_VALUE'])
@@ -95,8 +95,10 @@ def updateDB(request):
 
 		
 		flag = BhavCopy.objects.filter(symbol=symbol)
+		companyInstance = Company.objects.filter(symbol=symbol)[0]
 		if not flag:
-			BhavInstance = BhavCopy(symbol=data['SYMBOL'], 
+			date = datetime.strptime(data['TIMESTAMP'], '%d-%b-%Y')
+			BhavInstance = BhavCopy(symbol=companyInstance, 
 			open=data['OPEN'], 
 			high=data['HIGH'], 
 			low=data['LOW'], 
@@ -105,7 +107,7 @@ def updateDB(request):
 			prevClose=data['PREVCLOSE'], 
 			tottrdqty=data['TOTTRDQTY'], 
 			tottrdval=data['TOTTRDVAL'], 
-			timeStamp=data['TIMESTAMP'], 
+			timeStamp=date.strftime("%Y-%m-%d"), 
 			totalTrades=data['TOTALTRADES'])
 			BhavInstance.save()
 			print("Bhav Saved!")
@@ -116,9 +118,7 @@ def updateDB(request):
 def fetchFromDB(request):
 	data = dict()
 	symbol = request.data['symbol']
-	print(symbol)
 	company = Company.objects.filter(symbol=symbol)
-	print(company)
 	if company:
 		company = company[0]
 		data['SYMBOL'] = company.symbol
